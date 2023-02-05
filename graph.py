@@ -16,8 +16,8 @@ class Graph:
     str = str.replace('\n', '')
     for _ in str:
       self.adj_list.append([])
-    print(num_lines)
     self.add_edges_maze(str, num_lines)
+    print("PATH:", self.dfs(self.where_start(str), str))
 
   def add_edges_maze(self, str, num_lines):
     for i in range(len(str)):
@@ -35,21 +35,29 @@ class Graph:
     self.count_nodes += 1
     self.adj_list.append([])
 
-  def dfs(self, s) -> list:
+  def dfs(self, s, str) -> list:
     desc = [0 for _ in self.adj_list]
     S = [s]
     R = [s]
     desc[s] = 1
     while S != []:
-        u = S[-1]
-        desempilhar = True
-        for v in self.adj_list[u]:
-            if desc[v] == 0:
-                desempilhar = False
-                S.append(v)
-                R.append(v)
-                desc[v] = 1
-                break
-        if desempilhar:
-            S.pop()
-    return R
+      u = S[-1]
+      if str[u] == 'E':
+        return S
+      desempilhar = True
+      for v in self.adj_list[u]:
+        if desc[v] == 0:
+          desempilhar = False
+          S.append(v)
+          R.append(v)
+          desc[v] = 1
+          break
+      if desempilhar:
+        S.pop()
+    if S == []:
+      print("Non-existent path!")
+
+  def where_start(self, str):
+    for i in range(len(str)):
+      if str[i] == 'S':
+        return i
