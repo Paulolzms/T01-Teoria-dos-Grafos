@@ -1,10 +1,12 @@
 from graph import Graph
 
-option = '1'
-while option != '0':
-  option = input('Informe o arquivo (0 para sair): ')
-  if option != '0':
-    print("Procesando...")
+option = True
+while option:
+  file = input('Informe o arquivo (0 para sair): ')
+  if file == '0':
+    option = False
+    print("Saindo...")
+    break
+  else:
     g1 = Graph(0, adj_list=[])
-    g1.read_file(option)
-  else: print("Saindo...")
+    g1.read_file(file)
