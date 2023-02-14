@@ -9,39 +9,41 @@ class Graph:
       for _ in range(self.count_nodes):
         adj_list.append([])
 
-
   def read_file(self, file_name: str):
-    tempo_inicial = time.time()
-    f = open("maze/" + file_name)
-    num_caracter_in_line = len(f.readline()) - 1
+    start_time = time.time()
+    f = open("maze/" + file_name + ".txt", "r")
+    num_columns = len(f.readline()) - 1
+    num_lines = sum(1 for lines in f)
     f.close()
-    f = open("maze/" + file_name)
+    f = open("maze/" + file_name + ".txt", "r")
     str = f.read()
     str = str.replace('\n', '')
     for _ in str:
       self.add_node()
-    self.add_edges_maze(str, num_caracter_in_line)
-    print("Caminho:", self.dfs(self.where_start(str), str))
-    tempo_final = time.time()
-    print("Tempo execução:", (tempo_final - tempo_inicial))
+    self.add_edges_maze(str, num_columns)
+    path = self.dfs(self.where_start(str), str)
+    print("Caminho: " + self.to_coordinates(num_columns, num_lines, path, str))
+    end_time = time.time()
+    print("Tempo:", (end_time - start_time))
+    f.close()
 
-  def add_edges_maze(self, str, num_line):
+  def add_edges_maze(self, str: str, num_columns: int):
     for i in range(len(str)):
         if str[i] != '#':
-          if i-num_line >= 0 and str[i-num_line] != '#':
-            self.adj_list[i].append(i-num_line)
+          if i-num_columns >= 0 and str[i-num_columns] != '#':
+            self.adj_list[i].append(i-num_columns)
           if i-1 >= 0 and str[i-1] != '#':
             self.adj_list[i].append(i-1)
           if i+1 <= len(str)-1 and str[i+1] != '#':
             self.adj_list[i].append(i+1)
-          if i+num_line <= len(str)-1 and str[i+num_line] != '#':
-            self.adj_list[i].append(i+num_line)
+          if i+num_columns <= len(str)-1 and str[i+num_columns] != '#':
+            self.adj_list[i].append(i+num_columns)
         
   def add_node(self):
     self.count_nodes += 1
     self.adj_list.append([])
 
-  def dfs(self, s, str) -> list:
+  def dfs(self, s: int, str: str) -> list:
     desc = [0 for _ in self.adj_list]
     S = [s]
     R = [s]
@@ -63,7 +65,21 @@ class Graph:
     if S == []:
       print("Non-existent path!")
 
-  def where_start(self, str):
+  def where_start(self, str: str) -> int:
     for i in range(len(str)):
       if str[i] == 'S':
         return i
+
+  def to_coordinates(self, num_columns: int, num_lines: int, path: list, str: str) -> str:
+    coordinates = ""
+    for j in path:
+      for i in range(num_lines):
+        if j < num_columns * (i+1):
+          u = i
+          break
+      for k in range(num_columns):
+        if j == (num_columns * i) + k:
+          v = k
+      coordinates += "(" + f"{u}, " + f"{v}" + ") "
+    return coordinates
+    
