@@ -10,21 +10,28 @@ class Graph:
         adj_list.append([])
 
   def read_file(self, file_name: str):
-    start_time = time.time()
-    f = open("maze/" + file_name + ".txt", "r")
-    num_columns = len(f.readline()) - 1
-    num_lines = sum(1 for lines in f)
-    f.close()
-    f = open("maze/" + file_name + ".txt", "r")
-    str = f.read()
-    str = str.replace('\n', '')
-    for _ in str:
-      self.add_node()
-    self.add_edges_maze(str, num_columns)
-    path = self.dfs(self.where_start(str), str)
-    print("Caminho: " + self.to_coordinates(num_columns, num_lines, path, str))
-    end_time = time.time()
-    print("Tempo:", (end_time - start_time))
+    try:
+      print("Processando...")
+      start_time = time.time()
+      f = open("maze/" + file_name + ".txt", "r")
+      num_columns = len(f.readline()) - 1
+      num_lines = sum(1 for lines in f)
+      f.close()
+      
+      f = open("maze/" + file_name + ".txt", "r")
+      str = f.read()
+      str = str.replace('\n', '')      
+      for _ in str:
+        self.add_node()
+      self.add_edges_maze(str, num_columns)
+      path = self.dfs(self.where_start(str), str)
+      print(f"Caminho: {self.to_coordinates(num_columns, num_lines, path, str)}")
+      end_time = time.time()
+      print(f"Tempo: {(end_time - start_time):,.4f}s")
+    
+    except IOError:
+      print(IOError)
+      exit()
     f.close()
 
   def add_edges_maze(self, str: str, num_columns: int):
